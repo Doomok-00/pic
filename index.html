@@ -7,15 +7,12 @@
 <style>
     body {
         font-family: Arial, sans-serif;
+        margin: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
     }
+
     header {
         width: 100%;
         display: flex;
@@ -23,34 +20,35 @@
         align-items: center;
         margin-bottom: 20px;
     }
+
     h1 {
         margin: 0;
     }
+
     button {
         padding: 5px 10px;
         margin-left: 10px;
         cursor: pointer;
     }
+
     .grid-container {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, 300px);
+        grid-template-rows: repeat(2, 200px);
         gap: 20px;
-        width: 100%;
-        max-width: 1200px;
     }
+
     .grid-item {
         border: 1px solid #ccc;
-        height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        padding: 10px;
-        box-sizing: border-box;
+        overflow: hidden;
         font-size: 16px;
-        word-break: break-word;
+        text-align: center;
     }
-    input, textarea {
+
+    textarea {
         width: 100%;
         height: 100%;
         text-align: center;
@@ -59,19 +57,35 @@
         border: none;
         outline: none;
         font-size: 16px;
-        box-sizing: border-box;
-        padding: 10px;
+        padding: 0;
     }
+
+    /* PDF 출력 시 중앙 정렬 */
     @media print {
         body {
-            display: block;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        header {
+            display: none; /* 버튼과 제목은 인쇄에서 숨김 */
         }
         .grid-container {
-            display: block;
+            display: grid;
+            grid-template-columns: repeat(3, 6cm); /* A4 기준 적절한 크기 */
+            grid-template-rows: repeat(2, 4cm);
+            gap: 1cm;
         }
         .grid-item {
+            border: 1px solid #000; /* 인쇄 시 선 명확하게 */
             page-break-inside: avoid;
-            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            font-size: 12pt;
         }
     }
 </style>
@@ -87,24 +101,12 @@
 </header>
 
 <div class="grid-container">
-    <div class="grid-item">
-        <textarea id="cell1"></textarea>
-    </div>
-    <div class="grid-item">
-        <textarea id="cell2"></textarea>
-    </div>
-    <div class="grid-item">
-        <textarea id="cell3"></textarea>
-    </div>
-    <div class="grid-item">
-        <textarea id="cell4"></textarea>
-    </div>
-    <div class="grid-item">
-        <textarea id="cell5"></textarea>
-    </div>
-    <div class="grid-item">
-        <textarea id="cell6"></textarea>
-    </div>
+    <div class="grid-item"><textarea id="cell1"></textarea></div>
+    <div class="grid-item"><textarea id="cell2"></textarea></div>
+    <div class="grid-item"><textarea id="cell3"></textarea></div>
+    <div class="grid-item"><textarea id="cell4"></textarea></div>
+    <div class="grid-item"><textarea id="cell5"></textarea></div>
+    <div class="grid-item"><textarea id="cell6"></textarea></div>
 </div>
 
 <script>
