@@ -126,6 +126,7 @@ textarea {
 <div class="controls" id="controls">
   <button onclick="copyText()">내용 동일 적용</button>
   <button onclick="savePDF()">PDF 저장</button>
+  <button onclick="resetPage()">초기화</button>
 </div>
 
 <div class="page" id="pdfArea">
@@ -181,11 +182,23 @@ function copyText() {
     document.getElementById('text1').value;
 }
 
+function resetPage() {
+  // 이미지 초기화
+  document.querySelectorAll('.photo-frame img').forEach(img => {
+    img.src = '';
+  });
+
+  // 텍스트 초기화
+  document.querySelectorAll('textarea').forEach(txt => {
+    txt.value = '';
+  });
+}
+
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
 
-  // 🔥 PDF에 버튼 안 나오게
+  // PDF에 버튼 안 나오게
   document.querySelectorAll('.photo-btn').forEach(el => {
     el.style.display = 'none';
   });
@@ -207,7 +220,6 @@ async function savePDF() {
     format: [794, 1123]
   });
 
-  // 🔥 비율 유지 출력 (사진 절대 안 찌그러짐)
   const imgWidth = 794;
   const imgHeight = canvas.height * (imgWidth / canvas.width);
 
