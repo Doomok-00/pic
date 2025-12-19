@@ -2,24 +2,25 @@ function openPhoto(num) {
   document.getElementById(`photo${num}`).click();
 }
 
-// ���� 1
+// 사진 1 선택
 document.getElementById("photo1").addEventListener("change", function(e) {
-  preview(e, 1);
+  previewImage(e, 1);
 });
 
-// ���� 2
+// 사진 2 선택 → 내용 자동 복사
 document.getElementById("photo2").addEventListener("change", function(e) {
-  preview(e, 2);
+  previewImage(e, 2);
 
-  const c1 = document.getElementById("content1");
-  const c2 = document.getElementById("content2");
+  const content1 = document.getElementById("content1");
+  const content2 = document.getElementById("content2");
 
-  if (c2.value.trim() === "") {
-    c2.value = c1.value;
+  if (content2.value.trim() === "") {
+    content2.value = content1.value;
   }
 });
 
-function preview(e, num) {
+// 이미지 미리보기
+function previewImage(e, num) {
   const file = e.target.files[0];
   if (!file) return;
 
@@ -28,4 +29,9 @@ function preview(e, num) {
     document.getElementById(`preview${num}`).src = evt.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+// PDF 저장
+function savePDF() {
+  window.print();
 }
