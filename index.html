@@ -5,10 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>사진대지</title>
 
+<!-- PDF 라이브러리 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
+/* ===============================
+   기본 화면 스타일
+=============================== */
 body {
   margin: 0;
   background: #ccc;
@@ -21,7 +25,7 @@ body {
     sans-serif;
 }
 
-/* 버튼 영역 */
+/* 상단 버튼 */
 .controls {
   text-align: center;
   padding: 10px;
@@ -37,7 +41,7 @@ body {
   box-sizing: border-box;
 }
 
-/* ===== 사진대지 제목 (추가된 부분) ===== */
+/* 제목 */
 .title {
   text-align: center;
   font-size: 26px;
@@ -53,9 +57,10 @@ body {
   margin-bottom: 20px;
 }
 
+/* 이미지 (화면용) */
 .photo-box img {
   width: 100%;
-  height: 300px;   /* 🔥 사진 영역 크게 */
+  height: 300px;
   object-fit: contain;
   border: 1px solid #aaa;
 }
@@ -68,7 +73,7 @@ body {
 }
 
 .label {
-  width: 80px;                 /* 🔥 내용칸 줄임 */
+  width: 80px;
   border-right: 2px solid #000;
   display: flex;
   justify-content: center;
@@ -83,88 +88,21 @@ textarea {
   resize: none;
   font-size: 22px;
   text-align: center;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  outline: none;
 }
-@media print {
-  /* 출력 시 전체를 아래로 내려서 중앙 배치 */
-  body {
-    margin: 0;
-  }
 
-  #page {
-    margin-top: 150mm;
-  }
-
-  /* PDF에 버튼 안 나오게 */
-  button {
-    display: none !important;
-  }
-}
-  /* 사진 비율 유지 + 표 안에 꽉 차게 */
-.photo-box img,
-td img,
-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
 /* ===============================
-   PC에서 파일 경로 텍스트 제거
+   출력(PDF) 전용 스타일
 =============================== */
-input[type="file"] {
-  display: none !important;
-}
-
-  /* =========================
-   PDF 출력 전용 이미지 보정
-========================= */
-@media print {
-  img {
-    width: auto !important;
-    height: auto !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    object-fit: contain !important;
-  }
-}
-/* =========================
-   출력 시 세로 중앙 정렬
-========================= */
-@media print {
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 297mm;
-  }
-
-  #page {
-    margin: 0;
-  }
-}
-
-<style>
-
-/* =========================
-   화면에서는 버튼 보이게
-========================= */
-button {
-  display: block;
-}
-
-/* =========================
-   출력(PDF)에서만 숨김
-========================= */
 @media print {
 
+  /* 버튼 & 파일선택 숨김 */
   button,
   input[type="file"] {
     display: none !important;
   }
 
+  /* PDF에서 사진 비율 깨짐 방지 (핵심) */
   img {
     width: auto !important;
     height: auto !important;
@@ -173,31 +111,33 @@ button {
     object-fit: contain !important;
   }
 
+  /* A4 세로 중앙 정렬 */
   body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 297mm;
+    background: #fff;
+  }
+
+  .page {
+    margin: 0;
   }
 }
-</style>
-
-
-
-  
 </style>
 </head>
 
 <body>
 
+<!-- 상단 버튼 -->
 <div class="controls" id="controls">
   <button onclick="copyText()">내용 동일 적용</button>
   <button onclick="savePDF()">PDF 저장</button>
 </div>
 
+<!-- PDF 영역 -->
 <div class="page" id="pdfArea">
 
-  <!-- ✅ 사진대지 제목만 추가 -->
   <div class="title">사 진 대 지</div>
 
   <div class="photo-box">
@@ -221,17 +161,20 @@ button {
 </div>
 
 <script>
+/* 사진 로드 */
 function loadImage(e, id) {
   const reader = new FileReader();
   reader.onload = () => document.getElementById(id).src = reader.result;
   reader.readAsDataURL(e.target.files[0]);
 }
 
+/* 내용 복사 */
 function copyText() {
   document.getElementById('text2').value =
     document.getElementById('text1').value;
 }
 
+/* PDF 저장 */
 async function savePDF() {
   document.getElementById('controls').style.display = 'none';
 
@@ -261,8 +204,3 @@ async function savePDF() {
 
 </body>
 </html>
-
-
-
-
-
