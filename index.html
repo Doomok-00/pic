@@ -1,162 +1,126 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>사진대지</title>
-
-  <style>
-    /* =========================
-       기본 설정
-    ========================= */
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-    }
-
-    /* A4 전체 */
-    #page {
-      width: 210mm;
-      height: 297mm;
-      background: white;
-      margin: 0 auto;
-      box-sizing: border-box;
-      padding: 20mm;
-    }
-
-    /* 출력 시 중앙으로 내리기 */
-    @media print {
-      body {
-        background: white;
-      }
-
-      #page {
-        margin-top: 30mm;
-      }
-
-      .add-photo-btn {
-        display: none !important;
-      }
-    }
-
-    /* =========================
-       제목
-    ========================= */
-    .title {
-      text-align: center;
-      font-size: 26px;
-      font-weight: bold;
-      letter-spacing: 8px;
-      margin-bottom: 12mm;
-    }
-
-    /* =========================
-       사진대지 영역
-    ========================= */
-    .sheet {
-      display: flex;
-      gap: 10mm;
-    }
-
-    /* 사진 영역 */
-    .photo-box {
-      width: 45%;
-      height: 110mm;
-      border: 1px solid #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .photo-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* 내용 영역 */
-    .content-box {
-      width: 55%;
-      border: 1px solid #000;
-      padding: 10mm;
-      box-sizing: border-box;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    textarea {
-      width: 100%;
-      height: 100%;
-      border: none;
-      resize: none;
-      font-size: 16px;
-      text-align: center;
-      outline: none;
-      font-family: inherit;
-    }
-
-    /* 버튼 */
-    .add-photo-btn {
-      margin-top: 10mm;
-      display: block;
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사진대지</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body {
+  margin: 0;
+  background: #ccc;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    Arial,
+    sans-serif;
+}/* 버튼 영역 */
+.controls {
+  text-align: center;
+  padding: 10px;
+}/* A4 고정 */
+.page {
+  width: 794px;
+  height: 1123px;
+  background: #fff;
+  margin: auto;
+  padding: 30px 40px;
+  box-sizing: border-box;
+}/* ===== 사진대지 제목 (추가된 부분) ===== */
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 8px;
+  margin-bottom: 20px;
+}/* 사진 블록 */
+.photo-box {
+  border: 2px solid #000;
+  padding: 10px;
+  margin-bottom: 20px;
+}.photo-box img {
+  width: 100%;
+  height: 300px;   /* 🔥 사진 영역 크게 */
+  object-fit: contain;
+  border: 1px solid #aaa;
+}/* 내용 행 */
+.content-row {
+  display: flex;
+  border-top: 2px solid #000;
+  margin-top: 5px;
+}.label {
+  width: 80px;                 /* 🔥 내용칸 줄임 */
+  border-right: 2px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}textarea {
+  flex: 1;
+  height: 60px;
+  border: none;
+  resize: none;
+  font-size: 22px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}</style>
 </head>
-
 <body>
-
-  <div id="page">
-
-    <!-- 제목 -->
-    <div class="title">사 진 대 지</div>
-
-    <!-- 사진대지 -->
-    <div class="sheet">
-
-      <!-- 사진 -->
-      <div class="photo-box">
-        <img id="photo1">
-      </div>
-
-      <!-- 내용 -->
-      <div class="content-box">
-        <textarea placeholder="작업 내용을 입력하세요"></textarea>
-      </div>
-
+<div class="controls" id="controls">
+  <button onclick="copyText()">내용 동일 적용</button>
+  <button onclick="savePDF()">PDF 저장</button>
+</div>
+<div class="page" id="pdfArea">
+  <!-- ✅ 사진대지 제목만 추가 -->
+  <div class="title">사 진 대 지</div>
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
+    <img id="img1">
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text1"></textarea>
     </div>
-
-    <!-- 사진 추가 버튼 -->
-    <button class="add-photo-btn" onclick="addPhoto()">사진 추가</button>
-
   </div>
-
-  <script>
-    function addPhoto() {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-
-      input.onchange = function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          document.getElementById("photo1").src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-      };
-
-      input.click();
-    }
-  </script>
-
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(event,'img2')">
+    <img id="img2">
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text2"></textarea>
+    </div>
+  </div>
+</div>
+<script>
+function loadImage(e, id) {
+  const reader = new FileReader();
+  reader.onload = () => document.getElementById(id).src = reader.result;
+  reader.readAsDataURL(e.target.files[0]);
+}function copyText() {
+  document.getElementById('text2').value =
+    document.getElementById('text1').value;
+}async function savePDF() {
+  document.getElementById('controls').style.display = 'none';
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 300));
+  const canvas = await html2canvas(document.getElementById('pdfArea'), {
+    scale: 1,
+    backgroundColor: '#ffffff'
+  });
+  const imgData = canvas.toDataURL('image/jpeg', 0.7);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: 'p',
+    unit: 'px',
+    format: [794, 1123]
+  });
+  pdf.addImage(imgData, 'JPEG', 0, 0, 794, 1123);
+  pdf.save('사진대지.pdf');
+  document.getElementById('controls').style.display = 'block';
+}</script>
 </body>
 </html>
