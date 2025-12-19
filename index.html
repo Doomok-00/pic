@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>사진대지</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="a4">
+
+  <h1>사 진 대 지</h1>
+
+  <!-- 사진 1 -->
+  <div class="photo-box">
+    <button onclick="openPhoto(1)">사진 추가</button>
+    <input type="file" id="photo1" accept="image/*" hidden>
+    <img id="preview1">
+  </div>
+
+  <!-- 내용 1 -->
+  <div class="content-row">
+    <span>내 용</span>
+    <textarea id="content1"></textarea>
+  </div>
+
+  <!-- 사진 2 -->
+  <div class="photo-box">
+    <button onclick="openPhoto(2)">사진 추가</button>
+    <input type="file" id="photo2" accept="image/*" hidden>
+    <img id="preview2">
+  </div>
+
+  <!-- 내용 2 -->
+  <div class="content-row">
+    <span>내 용</span>
+    <textarea id="content2"></textarea>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
