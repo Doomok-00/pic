@@ -1,19 +1,38 @@
+/* ===== 한글 안 깨지는 폰트 설정 ===== */
+@font-face {
+  font-family: 'NotoSansKR';
+  src: local('Noto Sans KR'),
+       local('Apple SD Gothic Neo'),
+       local('Malgun Gothic');
+}
+
+* {
+  font-family: 'NotoSansKR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  box-sizing: border-box;
+}
+
+/* ===== 화면 중앙 배치 ===== */
 body {
   background: #ccc;
   margin: 0;
-  padding: 20px;
+  padding: 0;
+
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: center;     /* 세로 중앙 */
+  min-height: 100vh;
 }
 
+/* ===== A4 용지 ===== */
 .a4 {
   width: 210mm;
   height: 297mm;
   background: white;
-  margin: auto;
   padding: 15mm;
-  box-sizing: border-box;
   border: 1px solid #000;
 }
 
+/* ===== 제목 ===== */
 h1 {
   text-align: center;
   font-size: 22px;
@@ -21,6 +40,7 @@ h1 {
   letter-spacing: 5px;
 }
 
+/* ===== 사진 영역 ===== */
 .photo-box {
   height: 95mm;
   border: 1px solid #000;
@@ -41,6 +61,7 @@ h1 {
   object-fit: contain;
 }
 
+/* ===== 내용 영역 ===== */
 .content-row {
   display: flex;
   border: 1px solid #000;
@@ -52,23 +73,38 @@ h1 {
   width: 50px;
   text-align: center;
   border-right: 1px solid #000;
-  line-height: 40px;
+  line-height: 45px;
 }
 
 .content-row textarea {
   flex: 1;
   border: none;
-  padding: 5px;
+  height: 45px;
   resize: none;
-  height: 40px;
+  padding: 5px;
+
+  font-size: 16px;       /* 글씨 크게 */
+  text-align: center;   /* 가운데 정렬 */
+  line-height: 1.4;
 }
 
+/* ===== PDF 버튼 ===== */
+.print-area {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ===== 인쇄(PDF) 전용 ===== */
 @media print {
   body {
     background: none;
-    padding: 0;
   }
+
   .a4 {
     border: none;
+  }
+
+  button {
+    display: none; /* PDF에 버튼 안 보이게 */
   }
 }
