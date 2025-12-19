@@ -111,7 +111,13 @@ img {
   max-height: 100%;
   object-fit: contain;
 }
-
+/* ===============================
+   PC에서 파일 경로 텍스트 제거
+=============================== */
+input[type="file"] {
+  display: none !important;
+}
+  
 </style>
 </head>
 
@@ -188,5 +194,6 @@ async function savePDF() {
 
 </body>
 </html>
+
 
 
