@@ -132,32 +132,28 @@ textarea {
 <div class="page" id="pdfArea">
   <div class="title">사 진 대 지</div>
 
-  <div class="photo-box">
+  <div class="photo-box" id="photoBox1">
     <label class="photo-btn">
       사진 추가
       <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
     </label>
-
-    <div class="photo-frame">
+    <div class="photo-frame" id="frame1">
       <img id="img1">
     </div>
-
     <div class="content-row">
       <div class="label">내용</div>
       <textarea id="text1"></textarea>
     </div>
   </div>
 
-  <div class="photo-box">
+  <div class="photo-box" id="photoBox2">
     <label class="photo-btn">
       사진 추가
       <input type="file" accept="image/*" onchange="loadImage(event,'img2')">
     </label>
-
-    <div class="photo-frame">
+    <div class="photo-frame" id="frame2">
       <img id="img2">
     </div>
-
     <div class="content-row">
       <div class="label">내용</div>
       <textarea id="text2"></textarea>
@@ -184,8 +180,13 @@ function copyText() {
 
 function resetPage() {
   // 이미지 초기화 (iOS 호환)
-  document.querySelectorAll('.photo-frame img').forEach(img => {
-    img.removeAttribute('src');
+  ['img1','img2'].forEach(id => {
+    const img = document.getElementById(id);
+    const parent = img.parentNode;
+    parent.removeChild(img);             // 기존 이미지 제거
+    const newImg = document.createElement('img'); // 새 이미지 생성
+    newImg.id = id;
+    parent.appendChild(newImg);         // 새 이미지 추가
   });
 
   // 텍스트 초기화
@@ -194,12 +195,10 @@ function resetPage() {
   });
 }
 
-
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
 
-  // PDF에 버튼 안 나오게
   document.querySelectorAll('.photo-btn').forEach(el => {
     el.style.display = 'none';
   });
@@ -227,7 +226,6 @@ async function savePDF() {
   pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
   pdf.save('사진대지.pdf');
 
-  // 원상 복구
   controls.style.display = 'block';
   document.querySelectorAll('.photo-btn').forEach(el => {
     el.style.display = '';
@@ -237,4 +235,3 @@ async function savePDF() {
 
 </body>
 </html>
-
