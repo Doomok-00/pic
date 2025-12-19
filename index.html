@@ -108,21 +108,21 @@ body {
 }
 
 .label {
-  width: 80px;
+  width: 50px;
   border-right: 2px solid #000;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 textarea {
   flex: 1;
-  height: 60px;
-  line-height: 60px;          /* 🔥 세로 중앙 정렬 */
+  height: 50px;
+  line-height: 30px;          /* 🔥 세로 중앙 정렬 */
   border: none;
   resize: none;
-  font-size: 22px;
+  font-size: 18px;
   text-align: center;
   outline: none;
 }
@@ -220,7 +220,7 @@ async function savePDF() {
     format: [794, 1123]
   });
 
-  pdf.addImage(imgData, 'JPEG', 0, 0, 794, 1123);
+  pdf.addImage(imgData, 'JPEG', 0, 0, imgwidth, imgheight);
   pdf.save('사진대지.pdf');
 
   controls.style.display = 'block';
@@ -229,3 +229,4 @@ async function savePDF() {
 
 </body>
 </html>
+
