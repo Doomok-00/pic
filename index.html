@@ -95,7 +95,7 @@ textarea {
   }
 
   #page {
-    margin-top: 30mm;
+    margin-top: 150mm;
   }
 
   /* PDF에 버튼 안 나오게 */
@@ -146,6 +146,41 @@ input[type="file"] {
   }
 }
 
+<style>
+
+/* =========================
+   화면에서는 버튼 보이게
+========================= */
+button {
+  display: block;
+}
+
+/* =========================
+   출력(PDF)에서만 숨김
+========================= */
+@media print {
+
+  button,
+  input[type="file"] {
+    display: none !important;
+  }
+
+  img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 297mm;
+  }
+}
+</style>
 
 
 
@@ -226,6 +261,7 @@ async function savePDF() {
 
 </body>
 </html>
+
 
 
 
