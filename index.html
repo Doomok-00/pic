@@ -10,6 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
+
 /* ===============================
    기본 화면 스타일
 =============================== */
@@ -49,6 +50,23 @@ body {
   letter-spacing: 8px;
   margin-bottom: 20px;
 }
+
+   /* 사진 추가 버튼 */
+.photo-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  margin-bottom: 8px;
+  border: 1px solid #000;
+  background: #eee;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* 실제 file input은 숨김 */
+.photo-btn input[type="file"] {
+  display: none;
+}
+
 
 /* 사진 블록 */
 .photo-box {
@@ -124,6 +142,8 @@ textarea {
     margin: 0;
   }
 }
+
+   
 </style>
 </head>
 
@@ -141,7 +161,11 @@ textarea {
   <div class="title">사 진 대 지</div>
 
   <div class="photo-box">
-    <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
+<label class="photo-btn">
+  사진 추가
+  <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
+</label>
+
     <img id="img1">
     <div class="content-row">
       <div class="label">내용</div>
@@ -204,3 +228,4 @@ async function savePDF() {
 
 </body>
 </html>
+
