@@ -2,39 +2,44 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>»çÁø´ëÁö</title>
+  <title>ì‚¬ì§„ëŒ€ì§€</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="a4">
 
-  <h1>»ç Áø ´ë Áö</h1>
+  <h1>ì‚¬ ì§„ ëŒ€ ì§€</h1>
 
-  <!-- »çÁø 1 -->
+  <!-- ì‚¬ì§„ 1 -->
   <div class="photo-box">
-    <button onclick="openPhoto(1)">»çÁø Ãß°¡</button>
+    <button type="button" onclick="openPhoto(1)">ì‚¬ì§„ ì¶”ê°€</button>
     <input type="file" id="photo1" accept="image/*" hidden>
     <img id="preview1">
   </div>
 
-  <!-- ³»¿ë 1 -->
+  <!-- ë‚´ìš© 1 -->
   <div class="content-row">
-    <span>³» ¿ë</span>
-    <textarea id="content1"></textarea>
+    <span>ë‚´ ìš©</span>
+    <textarea id="content1" placeholder="ë‚´ìš© ìž…ë ¥"></textarea>
   </div>
 
-  <!-- »çÁø 2 -->
+  <!-- ì‚¬ì§„ 2 -->
   <div class="photo-box">
-    <button onclick="openPhoto(2)">»çÁø Ãß°¡</button>
+    <button type="button" onclick="openPhoto(2)">ì‚¬ì§„ ì¶”ê°€</button>
     <input type="file" id="photo2" accept="image/*" hidden>
     <img id="preview2">
   </div>
 
-  <!-- ³»¿ë 2 -->
+  <!-- ë‚´ìš© 2 -->
   <div class="content-row">
-    <span>³» ¿ë</span>
-    <textarea id="content2"></textarea>
+    <span>ë‚´ ìš©</span>
+    <textarea id="content2" placeholder="ë‚´ìš© ìž…ë ¥"></textarea>
+  </div>
+
+  <!-- PDF ì €ìž¥ ë²„íŠ¼ -->
+  <div class="print-area">
+    <button onclick="savePDF()">PDFë¡œ ì €ìž¥</button>
   </div>
 
 </div>
