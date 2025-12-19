@@ -183,9 +183,9 @@ function copyText() {
 }
 
 function resetPage() {
-  // 이미지 초기화
+  // 이미지 초기화 (iOS 호환)
   document.querySelectorAll('.photo-frame img').forEach(img => {
-    img.src = '';
+    img.removeAttribute('src');
   });
 
   // 텍스트 초기화
@@ -193,6 +193,7 @@ function resetPage() {
     txt.value = '';
   });
 }
+
 
 async function savePDF() {
   const controls = document.getElementById('controls');
@@ -236,3 +237,4 @@ async function savePDF() {
 
 </body>
 </html>
+
