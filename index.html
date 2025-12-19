@@ -1,126 +1,198 @@
+## 목표
+
+GitHub Pages로 배포 → **아이폰 / 안드로이드 / PC 웹**에서 사용
+
+* 사진대지 작성
+* **PDF / JPG로 추출**
+* 설치 없이 브라우저에서 동작
+
+---
+
+## 전체 구조 (권장)
+
+```
+photo-board/
+├─ index.html
+├─ style.css
+├─ script.js
+└─ README.md
+```
+
+---
+
+## 사용 기술 (모두 무료 · 웹 표준)
+
+* **HTML/CSS** : 사진대지 레이아웃
+* **JavaScript** : 이미지 삽입, 텍스트 입력
+* **html2canvas** : 화면 → 이미지(JPG)
+* **jsPDF** : PDF 생성
+* **GitHub Pages** : 배포
+
+모바일 Safari / Chrome 모두 지원됨
+
+---
+
+## ✅ 단일 파일 버전 (index.html 하나로 완성)
+
+아래 **이 파일 하나만** GitHub에 올리면 바로 사용 가능합니다.
+
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>사진대지</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>사진대지 작성</title>
 
-    header {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
+  <!-- 스타일 -->
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
     }
 
     h1 {
-        margin: 0;
+      margin: 20px 0;
+    }
+
+    #board {
+      width: 210mm;
+      min-height: 297mm;
+      margin: auto;
+      border: 1px solid #000;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .photo-box {
+      border: 1px solid #000;
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
+    }
+
+    .photo-box img {
+      flex: 1;
+      object-fit: contain;
+      border: 1px solid #ccc;
+      margin-top: 4px;
+    }
+
+    .caption {
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .buttons {
+      margin: 20px;
     }
 
     button {
-        padding: 5px 10px;
-        margin-left: 10px;
-        cursor: pointer;
+      padding: 10px 16px;
+      margin: 5px;
+      font-size: 14px;
     }
 
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 300px);
-        grid-template-rows: repeat(2, 200px);
-        gap: 20px;
-    }
-
-    .grid-item {
-        border: 1px solid #ccc;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    textarea {
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        vertical-align: middle;
-        resize: none;
-        border: none;
-        outline: none;
-        font-size: 16px;
-        padding: 0;
-    }
-
-    /* PDF 출력 시 중앙 정렬 */
     @media print {
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        header {
-            display: none; /* 버튼과 제목은 인쇄에서 숨김 */
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 6cm); /* A4 기준 적절한 크기 */
-            grid-template-rows: repeat(2, 4cm);
-            gap: 1cm;
-        }
-        .grid-item {
-            border: 1px solid #000; /* 인쇄 시 선 명확하게 */
-            page-break-inside: avoid;
-        }
-        textarea {
-            width: 100%;
-            height: 100%;
-            font-size: 12pt;
-        }
+      body {
+        margin: 0;
+      }
+      .buttons {
+        display: none;
+      }
     }
-</style>
+  </style>
 </head>
 <body>
 
-<header>
-    <h1>사진대지</h1>
-    <div>
-        <button onclick="copyContent()">내용 복사</button>
-        <button onclick="resetContent()">초기화</button>
-    </div>
-</header>
+<h1>사 진 대 지</h1>
 
-<div class="grid-container">
-    <div class="grid-item"><textarea id="cell1"></textarea></div>
-    <div class="grid-item"><textarea id="cell2"></textarea></div>
-    <div class="grid-item"><textarea id="cell3"></textarea></div>
-    <div class="grid-item"><textarea id="cell4"></textarea></div>
-    <div class="grid-item"><textarea id="cell5"></textarea></div>
-    <div class="grid-item"><textarea id="cell6"></textarea></div>
+<div id="board">
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(this, 0)">
+    <img />
+    <input class="caption" placeholder="내용 입력" />
+  </div>
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(this, 1)">
+    <img />
+    <input class="caption" placeholder="내용 입력" />
+  </div>
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(this, 2)">
+    <img />
+    <input class="caption" placeholder="내용 입력" />
+  </div>
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(this, 3)">
+    <img />
+    <input class="caption" placeholder="내용 입력" />
+  </div>
 </div>
 
-<script>
-function copyContent() {
-    const source = document.getElementById('cell2').value;
-    const targetIds = ['cell1','cell3','cell4','cell5','cell6'];
-    targetIds.forEach(id => document.getElementById(id).value = source);
-}
+<div class="buttons">
+  <button onclick="exportJPG()">JPG 저장</button>
+  <button onclick="exportPDF()">PDF 저장</button>
+</div>
 
-function resetContent() {
-    const allCells = ['cell1','cell2','cell3','cell4','cell5','cell6'];
-    allCells.forEach(id => document.getElementById(id).value = '');
-}
+<!-- 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<!-- 스크립트 -->
+<script>
+  function loadImage(input, index) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.querySelectorAll('.photo-box img')[index].src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function exportJPG() {
+    html2canvas(document.getElementById('board'), { scale: 2 }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = '사진대지.jpg';
+      link.href = canvas.toDataURL('image/jpeg');
+      link.click();
+    });
+  }
+
+  function exportPDF() {
+    html2canvas(document.getElementById('board'), { scale: 2 }).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+      pdf.save('사진대지.pdf');
+    });
+  }
 </script>
 
 </body>
 </html>
+```
+
+---
+
+## 4️⃣ GitHub Pages 배포
+
+1. GitHub 저장소 생성
+2. 위 파일 업로드
+3. **Settings → Pages → main / root 선택**
+4. 생성된 주소로 모바일 접속 가능
+
+---
+
+## 다음 단계에서 확장 가능
+
+* 사진 칸 개수 선택 (2·4·6·8)
+* 제목/날짜/현장명 입력
+* A3 / 세로·가로 전환
+* 자동 파일명 규칙
+
+원하시면 👉 **UI 고급화 / 인쇄용 규격 / 현업용 템플릿**까지 바로 이어서 만들어드릴게요.
