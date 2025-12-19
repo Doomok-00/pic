@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>사진대지 PDF</title>
+
+<!-- 한글 폰트 -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+
+<!-- PDF 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body {
+    margin: 0;
+    padding: 20px;
+    background: #eee;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.page {
+    width: 210mm;
+    height: 297mm;
+    background: white;
+    margin: auto;
+    padding: 20mm;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.photo-box {
+    border: 2px solid #000;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.photo-box img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border: 1px solid #999;
+}
+
+textarea {
+    width: 100%;
+    height: 70px;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 10px;
+    resize: none;
+}
+
+.controls {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="controls" id="controls">
+    <button onclick="copyText()">내용 동일 적용</button>
+    <button onclick="savePDF()">PDF로 저장</button>
+</div>
+
+<div class="page" id="pdfArea">
+
+    <div class="photo-box">
+        <input type="file" accept="image/*" onchange="loadImage(event, 'img1')">
+        <img id="img1">
+        <textarea id="text1" placeholder="작업내용 입력"></textarea>
+    </div>
+
+    <div class="photo-box">
+        <input type="file" accept="image/*" onchange="loadImage(event, 'img2')">
+        <img id="img2">
+        <textarea id="text2" placeholder="작업내용 입력"></textarea>
+    </div>
+
+</div>
+
+<script>
+function loadImage(event, id) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById(id).src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+function copyText() {
+    document.getElementById('text2').value =
+        document.getElementById('text1').value;
+}
+
+async function savePDF() {
+    const controls = document.getElementById('controls');
+    controls.style.display = 'none';
+
+    const area = document.getElementById('pdfArea');
+
+    const canvas = await html2canvas(area, {
+        scale: 2,
+        useCORS: true
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+    pdf.save('사진대지.pdf');
+
+    controls.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
