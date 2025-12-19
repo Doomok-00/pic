@@ -126,6 +126,8 @@ textarea {
 <div class="controls" id="controls">
   <button onclick="copyText()">내용 동일 적용</button>
   <button onclick="savePDF()">PDF 저장</button>
+  <!-- ✅ 지우기 버튼 추가 -->
+  <button onclick="clearAll()">지우기</button>
 </div>
 
 <div class="page" id="pdfArea">
@@ -181,11 +183,26 @@ function copyText() {
     document.getElementById('text1').value;
 }
 
+/* ✅ 지우기 기능 */
+function clearAll() {
+  // 이미지 초기화
+  document.getElementById('img1').src = '';
+  document.getElementById('img2').src = '';
+
+  // 텍스트 초기화
+  document.getElementById('text1').value = '';
+  document.getElementById('text2').value = '';
+
+  // 파일 input 초기화
+  document.querySelectorAll('input[type="file"]').forEach(input => {
+    input.value = '';
+  });
+}
+
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
 
-  // 🔥 PDF에 버튼 안 나오게
   document.querySelectorAll('.photo-btn').forEach(el => {
     el.style.display = 'none';
   });
@@ -207,14 +224,12 @@ async function savePDF() {
     format: [794, 1123]
   });
 
-  // 🔥 비율 유지 출력 (사진 절대 안 찌그러짐)
   const imgWidth = 794;
   const imgHeight = canvas.height * (imgWidth / canvas.width);
 
   pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
   pdf.save('사진대지.pdf');
 
-  // 원상 복구
   controls.style.display = 'block';
   document.querySelectorAll('.photo-btn').forEach(el => {
     el.style.display = '';
