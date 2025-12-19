@@ -4,9 +4,6 @@
 <meta charset="UTF-8" />
 <title>사진대지</title>
 
-<!-- ✅ JPG 저장용 라이브러리 (추가) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
 /* =========================
    기본 리셋
@@ -28,7 +25,7 @@ body {
   width: 210mm;
   height: 297mm;
   margin: auto;
-  padding-top: 25mm;
+  padding-top: 25mm;   /* ✅ 상단 여백 */
   display: flex;
   justify-content: center;
 }
@@ -58,7 +55,7 @@ td {
 
 .photo-box {
   width: 100%;
-  height: 180mm;
+  height: 180mm;          /* ✅ 사진 영역 높이 */
   border: 1px dashed #999;
   display: flex;
   align-items: center;
@@ -68,7 +65,7 @@ td {
 .photo-box img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  object-fit: contain;    /* ✅ 비율 유지 핵심 */
 }
 
 /* =========================
@@ -82,8 +79,8 @@ td {
 .content-box {
   height: 180mm;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;      /* ✅ 세로 중앙 */
+  justify-content: center;  /* 가로 중앙 */
 }
 
 textarea {
@@ -115,7 +112,7 @@ textarea {
 }
 
 button {
-  font-size: 16px;
+  font-size: 16px;       /* ✅ 버튼 크게 */
   padding: 10px 18px;
   margin: 5px;
   cursor: pointer;
@@ -131,12 +128,12 @@ button {
   }
 
   .wrapper {
-    padding-top: 30mm;
+    padding-top: 30mm;   /* ✅ PDF에서도 상단 여백 */
   }
 
   .controls,
   input[type="file"] {
-    display: none !important;
+    display: none !important;   /* ✅ 버튼 완전 제거 */
   }
 
   textarea {
@@ -144,18 +141,18 @@ button {
   }
 
   .content-box {
-    align-items: center !important;
+    align-items: center !important;  /* ✅ PDF 세로 중앙 고정 */
     justify-content: center !important;
   }
 
   .photo-box {
-    height: 180mm;
+    height: 180mm;  /* ✅ PDF에서도 동일 */
   }
 
   .photo-box img {
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
+    object-fit: contain;  /* ✅ PDF 찌그러짐 방지 */
   }
 }
 </style>
@@ -163,7 +160,7 @@ button {
 
 <body>
 
-<div class="wrapper" id="captureArea">
+<div class="wrapper">
   <div>
     <div class="title">사 진 대 지</div>
 
@@ -186,8 +183,6 @@ button {
 
     <div class="controls">
       <button onclick="window.print()">PDF 저장</button>
-      <!-- ✅ JPG 저장 버튼 추가 -->
-      <button onclick="saveJPG()">사진 출력(JPG)</button>
     </div>
   </div>
 </div>
@@ -196,21 +191,6 @@ button {
 function loadImage(event) {
   const img = document.getElementById('preview');
   img.src = URL.createObjectURL(event.target.files[0]);
-}
-
-/* ✅ 화면 그대로 JPG 저장 */
-function saveJPG() {
-  const target = document.getElementById('captureArea');
-
-  html2canvas(target, {
-    scale: 2,              // 해상도 ↑
-    backgroundColor: '#fff'
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = '사진대지.jpg';
-    link.href = canvas.toDataURL('image/jpeg', 0.95);
-    link.click();
-  });
 }
 </script>
 
