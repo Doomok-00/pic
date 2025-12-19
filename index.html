@@ -4,232 +4,119 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>사진대지</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-body {
-  margin: 0;
-  background: #ccc;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Apple SD Gothic Neo",
-    "Malgun Gothic",
-    Arial,
-    sans-serif;
-}
-
-/* 상단 버튼 */
-.controls {
-  text-align: center;
-  padding: 16px;
-}
-
-.controls button {
-  font-size: 18px;
-  padding: 14px 28px;
-  margin: 0 8px;
-  cursor: pointer;
-}
-
-/* A4 페이지 */
-.page {
-  width: 794px;
-  height: 1123px;
-  background: #fff;
-  margin: 20px auto;
-  padding: 70px 40px 40px 40px;
-  box-sizing: border-box;
-}
-
-/* 제목 */
-.title {
-  text-align: center;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 8px;
-  margin-bottom: 30px;
-}
-
-/* 사진 블록 */
-.photo-box {
-  border: 2px solid #000;
-  padding: 10px;
-  margin-bottom: 26px;
-}
-
-/* 사진 추가 버튼 */
-.photo-btn {
-  display: inline-block;
-  padding: 8px 14px;
-  margin-bottom: 8px;
-  border: 1px solid #000;
-  background: #eee;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.photo-btn input {
-  display: none;
-}
-
-/* 사진 영역 */
-.photo-frame {
-  width: 100%;
-  height: 320px;
-  border: 1px solid #aaa;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.photo-frame img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-/* 내용 영역 */
-.content-row {
-  display: flex;
-  border-top: 2px solid #000;
-  margin-top: 10px;
-}
-
-.label {
-  width: 60px;
-  border-right: 2px solid #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-}
-
-textarea {
-  flex: 1;
-  height: 60px;
-  line-height: 60px;
-  border: none;
-  resize: none;
-  font-size: 18px;
-  text-align: center;
-  outline: none;
-}
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    h1 {
+        margin: 0;
+    }
+    button {
+        padding: 5px 10px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+    }
+    .grid-item {
+        border: 1px solid #ccc;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
+        font-size: 16px;
+        word-break: break-word;
+    }
+    input, textarea {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        vertical-align: middle;
+        resize: none;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+    @media print {
+        body {
+            display: block;
+        }
+        .grid-container {
+            display: block;
+        }
+        .grid-item {
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+        }
+    }
 </style>
 </head>
-
 <body>
 
-<div class="controls" id="controls">
-  <button onclick="copyText()">내용 동일 적용</button>
-  <button onclick="savePDF()">PDF 저장</button>
-  <button onclick="resetPage()">초기화</button>
-</div>
+<header>
+    <h1>사진대지</h1>
+    <div>
+        <button onclick="copyContent()">내용 복사</button>
+        <button onclick="resetContent()">초기화</button>
+    </div>
+</header>
 
-<div class="page" id="pdfArea">
-  <div class="title">사 진 대 지</div>
-
-  <div class="photo-box" id="photoBox1">
-    <label class="photo-btn">
-      사진 추가
-      <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
-    </label>
-    <div class="photo-frame" id="frame1">
-      <img id="img1">
+<div class="grid-container">
+    <div class="grid-item">
+        <textarea id="cell1"></textarea>
     </div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text1"></textarea>
+    <div class="grid-item">
+        <textarea id="cell2"></textarea>
     </div>
-  </div>
-
-  <div class="photo-box" id="photoBox2">
-    <label class="photo-btn">
-      사진 추가
-      <input type="file" accept="image/*" onchange="loadImage(event,'img2')">
-    </label>
-    <div class="photo-frame" id="frame2">
-      <img id="img2">
+    <div class="grid-item">
+        <textarea id="cell3"></textarea>
     </div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text2"></textarea>
+    <div class="grid-item">
+        <textarea id="cell4"></textarea>
     </div>
-  </div>
+    <div class="grid-item">
+        <textarea id="cell5"></textarea>
+    </div>
+    <div class="grid-item">
+        <textarea id="cell6"></textarea>
+    </div>
 </div>
 
 <script>
-function loadImage(e, id) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    document.getElementById(id).src = reader.result;
-  };
-  reader.readAsDataURL(file);
+function copyContent() {
+    const source = document.getElementById('cell2').value;
+    const targetIds = ['cell1','cell3','cell4','cell5','cell6'];
+    targetIds.forEach(id => document.getElementById(id).value = source);
 }
 
-function copyText() {
-  document.getElementById('text2').value =
-    document.getElementById('text1').value;
-}
-
-function resetPage() {
-  // 이미지 초기화 (iOS 호환)
-  ['img1','img2'].forEach(id => {
-    const img = document.getElementById(id);
-    const parent = img.parentNode;
-    parent.removeChild(img);             // 기존 이미지 제거
-    const newImg = document.createElement('img'); // 새 이미지 생성
-    newImg.id = id;
-    parent.appendChild(newImg);         // 새 이미지 추가
-  });
-
-  // 텍스트 초기화
-  document.querySelectorAll('textarea').forEach(txt => {
-    txt.value = '';
-  });
-}
-
-async function savePDF() {
-  const controls = document.getElementById('controls');
-  controls.style.display = 'none';
-
-  document.querySelectorAll('.photo-btn').forEach(el => {
-    el.style.display = 'none';
-  });
-
-  await document.fonts.ready;
-  await new Promise(r => setTimeout(r, 300));
-
-  const canvas = await html2canvas(
-    document.getElementById('pdfArea'),
-    { scale: 1, backgroundColor: '#ffffff' }
-  );
-
-  const imgData = canvas.toDataURL('image/jpeg', 0.85);
-
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({
-    orientation: 'p',
-    unit: 'px',
-    format: [794, 1123]
-  });
-
-  const imgWidth = 794;
-  const imgHeight = canvas.height * (imgWidth / canvas.width);
-
-  pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-  pdf.save('사진대지.pdf');
-
-  controls.style.display = 'block';
-  document.querySelectorAll('.photo-btn').forEach(el => {
-    el.style.display = '';
-  });
+function resetContent() {
+    const allCells = ['cell1','cell2','cell3','cell4','cell5','cell6'];
+    allCells.forEach(id => document.getElementById(id).value = '');
 }
 </script>
 
