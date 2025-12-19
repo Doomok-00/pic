@@ -103,7 +103,15 @@ textarea {
     display: none !important;
   }
 }
-  
+  /* 사진 비율 유지 + 표 안에 꽉 차게 */
+.photo-box img,
+td img,
+img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 </style>
 </head>
 
@@ -180,4 +188,5 @@ async function savePDF() {
 
 </body>
 </html>
+
 
