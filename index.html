@@ -3,105 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사진대지</title>
 
-<title>사진대지 PDF</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-@page {
-  size: A4;
-  margin: 15mm;
-}
-
 body {
   margin: 0;
-  font-family: "Malgun Gothic", Arial, sans-serif;
+  background: #ccc;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    Arial,
+    sans-serif;
 }
 
-/* 전체 페이지 */
+/* 버튼 영역 */
+.controls {
+  text-align: center;
+  padding: 10px;
+}
+
+/* A4 고정 */
 .page {
-  width: 210mm;
-  height: 297mm;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 794px;
+  height: 1123px;
+  background: #fff;
+  margin: auto;
+  padding: 30px 40px;
+  box-sizing: border-box;
 }
 
-/* 실제 내용 영역 */
-.container {
-  width: 170mm;
-  height: 260mm;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ===== 사진대지 제목 ===== */
+/* ===== 사진대지 제목 (추가된 부분) ===== */
 .title {
   text-align: center;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 800;
-  margin-bottom: 10mm;
   letter-spacing: 8px;
+  margin-bottom: 20px;
 }
 
-/* ===== 사진 영역 ===== */
-.photo-area {
-  flex: 1.4;                /* 🔥 사진 영역 비중 확대 */
-  border: 2px solid #000;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 5mm;
-  padding: 5mm;
-  margin-bottom: 8mm;
-}
-
+/* 사진 블록 */
 .photo-box {
-  border: 1px solid #999;
+  border: 2px solid #000;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.photo-box img {
+  width: 100%;
+  height: 300px;   /* 🔥 사진 영역 크게 */
+  object-fit: contain;
+  border: 1px solid #aaa;
+}
+
+/* 내용 행 */
+.content-row {
+  display: flex;
+  border-top: 2px solid #000;
+  margin-top: 5px;
+}
+
+.label {
+  width: 80px;                 /* 🔥 내용칸 줄임 */
+  border-right: 2px solid #000;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
-  color: #666;
+  font-size: 18px;
 }
 
-/* ===== 내용 영역 ===== */
-.text-area {
-  flex: 0.6;                /* 🔥 내용 영역 줄이기 */
-  border: 2px solid #000;
-  padding: 8mm;
-  font-size: 14px;
-  line-height: 1.6;
+textarea {
+  flex: 1;
+  height: 60px;
+  border: none;
+  resize: none;
+  font-size: 22px;
+  text-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
 </head>
 
 <body>
-<div class="page">
-  <div class="container">
 
-    <!-- 사진대지 제목 -->
-    <div class="title">사 진 대 지</div>
-
-    <!-- 사진 영역 -->
-    <div class="photo-area">
-      <div class="photo-box">사진 1</div>
-      <div class="photo-box">사진 2</div>
-      <div class="photo-box">사진 3</div>
-      <div class="photo-box">사진 4</div>
-    </div>
-
-    <!-- 내용 영역 -->
-    <div class="text-area">
-      여기에 공사 내용, 위치, 시공 상태, 특이사항 등을 입력하세요.
-      <br><br>
-      • 공정명 :
-      <br>
-      • 위치 :
-      <br>
-      • 특이사항 :
-    </div>
-
-  </div>
+<div class="controls" id="controls">
+  <button onclick="copyText()">내용 동일 적용</button>
+  <button onclick="savePDF()">PDF 저장</button>
 </div>
+
+<div class="page" id="pdfArea">
+
+  <!-- ✅ 사진대지 제목만 추가 -->
+  <div class="title">사 진 대 지</div>
+
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
+    <img id="img1">
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text1"></textarea>
+    </div>
+  </div>
+
+  <div class="photo-box">
+    <input type="file" accept="image/*" onchange="loadImage(event,'img2')">
+    <img id="img2">
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text2"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function loadImage(e, id) {
+  const reader = new FileReader();
+  reader.onload = () => document.getElementById(id).src = reader.result;
+  reader.readAsDataURL(e.target.files[0]);
+}
+
+function copyText() {
+  document.getElementById('text2').value =
+    document.getElementById('text1').value;
+}
+
+async function savePDF() {
+  document.getElementById('controls').style.display = 'none';
+
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 300));
+
+  const canvas = await html2canvas(document.getElementById('pdfArea'), {
+    scale: 1,
+    backgroundColor: '#ffffff'
+  });
+
+  const imgData = canvas.toDataURL('image/jpeg', 0.7);
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: 'p',
+    unit: 'px',
+    format: [794, 1123]
+  });
+
+  pdf.addImage(imgData, 'JPEG', 0, 0, 794, 1123);
+  pdf.save('사진대지.pdf');
+
+  document.getElementById('controls').style.display = 'block';
+}
+</script>
+
 </body>
 </html>
