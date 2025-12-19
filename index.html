@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <title>사진대지</title>
 
-<!-- ✅ JPG 저장용 라이브러리 -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<!-- ✅ JPG 저장용 라이브러리 (추가) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 /* =========================
@@ -22,7 +22,7 @@ body {
 }
 
 /* =========================
-   전체 래퍼
+   전체 래퍼 (상단 여백 핵심)
 ========================= */
 .wrapper {
   width: 210mm;
@@ -122,7 +122,7 @@ button {
 }
 
 /* =========================
-   PDF 출력 전용
+   PDF 출력 전용 스타일
 ========================= */
 @media print {
 
@@ -141,6 +141,21 @@ button {
 
   textarea {
     border: none;
+  }
+
+  .content-box {
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .photo-box {
+    height: 180mm;
+  }
+
+  .photo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 }
 </style>
@@ -171,7 +186,8 @@ button {
 
     <div class="controls">
       <button onclick="window.print()">PDF 저장</button>
-      <button onclick="saveAsJPG()">JPG 저장</button>
+      <!-- ✅ JPG 저장 버튼 추가 -->
+      <button onclick="saveJPG()">사진 출력(JPG)</button>
     </div>
   </div>
 </div>
@@ -182,17 +198,17 @@ function loadImage(event) {
   img.src = URL.createObjectURL(event.target.files[0]);
 }
 
-/* ✅ JPG 저장 함수 */
-function saveAsJPG() {
+/* ✅ 화면 그대로 JPG 저장 */
+function saveJPG() {
   const target = document.getElementById('captureArea');
 
   html2canvas(target, {
-    scale: 2,       // 해상도 ↑
-    useCORS: true
+    scale: 2,              // 해상도 ↑
+    backgroundColor: '#fff'
   }).then(canvas => {
     const link = document.createElement('a');
     link.download = '사진대지.jpg';
-    link.href = canvas.toDataURL('image/jpeg', 1.0);
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
     link.click();
   });
 }
