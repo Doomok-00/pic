@@ -117,6 +117,38 @@ img {
 input[type="file"] {
   display: none !important;
 }
+
+  /* =========================
+   PDF 출력 전용 이미지 보정
+========================= */
+@media print {
+  img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+  }
+}
+/* =========================
+   출력 시 세로 중앙 정렬
+========================= */
+@media print {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 297mm;
+  }
+
+  #page {
+    margin: 0;
+  }
+}
+
+
+
+
   
 </style>
 </head>
@@ -194,6 +226,7 @@ async function savePDF() {
 
 </body>
 </html>
+
 
 
 
