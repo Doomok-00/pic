@@ -9,9 +9,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-/* ===============================
-   기본 설정
-=============================== */
 body {
   margin: 0;
   background: #ccc;
@@ -24,21 +21,30 @@ body {
     sans-serif;
 }
 
-/* 상단 버튼 */
+/* ===============================
+   상단 버튼
+=============================== */
 .controls {
   text-align: center;
-  padding: 10px;
+  padding: 14px;
+}
+
+.controls button {
+  font-size: 18px;
+  padding: 12px 26px;
+  margin: 0 8px;
+  cursor: pointer;
 }
 
 /* ===============================
-   A4 페이지 (절대 고정)
+   A4 페이지
 =============================== */
 .page {
   width: 794px;
   height: 1123px;
   background: #fff;
   margin: 20px auto;
-  padding: 30px 40px;
+  padding: 50px 40px 30px 40px; /* 🔥 상단 여백 증가 */
   box-sizing: border-box;
 }
 
@@ -48,7 +54,7 @@ body {
   font-size: 26px;
   font-weight: 800;
   letter-spacing: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 /* ===============================
@@ -71,29 +77,25 @@ body {
   font-size: 16px;
 }
 
-/* 파일 input 완전 숨김 */
 .photo-btn input {
   display: none;
 }
 
-/* 🔥 사진 영역 고정 (비율 안 깨지는 핵심) */
+/* 사진 프레임 */
 .photo-frame {
   width: 100%;
-  height: 320px;              /* ← 여기서 크기 조절 */
+  height: 320px;
   border: 1px solid #aaa;
-  background: #fff;
-
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
-/* 이미지 */
 .photo-frame img {
   width: 100%;
   height: 100%;
-  object-fit: contain;        /* 비율 100% 유지 */
+  object-fit: contain;
 }
 
 /* ===============================
@@ -117,6 +119,7 @@ body {
 textarea {
   flex: 1;
   height: 60px;
+  line-height: 60px;          /* 🔥 세로 중앙 정렬 */
   border: none;
   resize: none;
   font-size: 22px;
@@ -125,11 +128,12 @@ textarea {
 }
 
 /* ===============================
-   PDF 전용
+   PDF 출력 전용
 =============================== */
 @media print {
-  button, label {
-    display: none !important;
+  button,
+  .photo-btn {
+    display: none !important; /* 🔥 사진 추가 버튼 제거 */
   }
 }
 </style>
