@@ -1,11 +1,3 @@
-<br>  text-align: center;## 사용방법 ##</br>
-<br>  text-align: center;# 첫 번째 : 1페이지에 사진 2장, 원하는 사진갯수의 만큼 페이지 추가버튼 누르기</br>
-<br>  text-align: center;# 두 번째 : 사진 추가 버튼 클릭 후 사진 여러장 선택 후 추가하기</br>
-<br>  text-align: center;# 세 번째 : 내용 작성(첫 번째 페이지 상단에 내용 작성) 후 내용 복사 버튼 누를 경우 내용이 전부 복사됨</br>
-<br>  text-align: center;#    (ex : "101동 15층 벽체 철근배근 검측" 입력후 내용 복사 버튼 누르면 다른페이지 전부 다 복사됨)</br>
-<br>  text-align: center;# 네 번째 : pdf 저장버튼 클릭 후 공유하기</br>
-<br>  text-align: center;# 작성자 : 거꾸로해도 장과장 #</br>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -27,6 +19,16 @@ body {
     "Malgun Gothic",
     Arial,
     sans-serif;
+}
+
+/* 사용방법 안내 */
+.guide {
+  text-align: center;
+  background: #f5f5f5;
+  padding: 20px 10px;
+  font-size: 16px;
+  line-height: 1.8;
+  border-bottom: 2px solid #000;
 }
 
 /* 상단 버튼 */
@@ -126,6 +128,18 @@ textarea {
 
 <body>
 
+<!-- 사용방법 -->
+<div class="guide">
+  <div>## 사용방법 ##</div>
+  <div># 첫 번째 : 1페이지에 사진 2장, 원하는 사진갯수의 만큼 페이지 추가버튼 누르기</div>
+  <div># 두 번째 : 사진 추가 버튼 클릭 후 사진 여러장 선택 후 추가하기</div>
+  <div># 세 번째 : 내용 작성(첫 번째 페이지 상단에 내용 작성) 후 내용 복사 버튼 누를 경우 내용이 전부 복사됨</div>
+  <div># (ex : "101동 15층 벽체 철근배근 검측" 입력후 내용 복사 버튼 누르면 다른페이지 전부 다 복사됨)</div>
+  <div># 네 번째 : pdf 저장버튼 클릭 후 공유하기</div>
+  <div># 작성자 : 거꾸로해도 장과장 #</div>
+</div>
+
+<!-- 컨트롤 -->
 <div class="controls" id="controls">
   <label class="photo-btn">
     사진 추가
@@ -135,6 +149,7 @@ textarea {
   <button onclick="copyText()">내용 복사</button>
   <button onclick="addPage()">페이지 추가</button>
   <button onclick="removePage()">페이지 삭제</button>
+  <button onclick="resetAll()">전체 내용 지우기</button>
   <button onclick="savePDF()">PDF 저장</button>
 
   <span class="page-count" id="pageCount">page : 1</span>
@@ -152,7 +167,6 @@ function createPage() {
 
   const page = document.createElement('div');
   page.className = 'page';
-  page.dataset.page = pageIndex;
 
   page.innerHTML = `
     <div class="title">사 진 대 지</div>
@@ -172,7 +186,7 @@ function createPage() {
   updatePageCount();
 }
 
-/* 초기 1페이지 */
+/* 초기 페이지 */
 createPage();
 
 /* 페이지 추가 */
@@ -184,18 +198,17 @@ function addPage() {
 function removePage() {
   const pages = document.querySelectorAll('.page');
   if (pages.length <= 1) return;
-
   pages[pages.length - 1].remove();
   updatePageCount();
 }
 
-/* 페이지 수 표시 */
+/* 페이지 수 */
 function updatePageCount() {
-  const count = document.querySelectorAll('.page').length;
-  document.getElementById('pageCount').textContent = `page : ${count}`;
+  document.getElementById('pageCount').textContent =
+    `page : ${document.querySelectorAll('.page').length}`;
 }
 
-/* 사진 4장 자동 배치 */
+/* 사진 여러 장 자동 배치 */
 function loadImages(e) {
   const files = Array.from(e.target.files);
   const imgs = document.querySelectorAll('.photo-frame img');
@@ -209,16 +222,24 @@ function loadImages(e) {
   e.target.value = '';
 }
 
-/* 내용 동일 적용 */
+/* 내용 복사 */
 function copyText() {
   const texts = document.querySelectorAll('textarea');
   if (!texts.length) return;
-
   const value = texts[0].value;
   texts.forEach(t => t.value = value);
 }
 
-/* PDF 저장 (모든 페이지) */
+/* 전체 초기화 */
+function resetAll() {
+  document.getElementById('pages').innerHTML = '';
+  pageIndex = 0;
+  imgIndex = 1;
+  createPage();
+  updatePageCount();
+}
+
+/* PDF 저장 */
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
@@ -227,7 +248,6 @@ async function savePDF() {
   const pdf = new jsPDF({ unit:'px', format:[794,1123] });
 
   const pages = document.querySelectorAll('.page');
-
   for (let i = 0; i < pages.length; i++) {
     if (i > 0) pdf.addPage();
     const canvas = await html2canvas(pages[i], { scale:1, backgroundColor:'#fff' });
@@ -242,8 +262,3 @@ async function savePDF() {
 
 </body>
 </html>
-
-
-
-
-
