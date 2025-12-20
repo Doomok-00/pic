@@ -27,14 +27,19 @@ body {
   padding: 16px;
 }
 
-.controls button, .photo-btn {
+.controls button,
+.photo-btn {
   font-size: 18px;
   padding: 14px 28px;
   margin: 0 6px;
   cursor: pointer;
+  border: 1px solid #000;
+  background: #eee;
 }
 
-.photo-btn input { display: none; }
+.photo-btn input {
+  display: none;
+}
 
 /* A4 페이지 */
 .page {
@@ -110,9 +115,10 @@ textarea {
 
 <div class="controls" id="controls">
   <label class="photo-btn">
-    사진 여러 장 추가 (최대 4장)
+    사진 4장 추가
     <input type="file" accept="image/*" multiple onchange="loadImages(event)">
   </label>
+  <button onclick="copyText()">내용 동일 적용</button>
   <button onclick="addPage()">페이지 추가</button>
   <button onclick="savePDF()">PDF 저장</button>
 </div>
@@ -123,12 +129,18 @@ textarea {
 
   <div class="photo-box">
     <div class="photo-frame"><img id="img1"></div>
-    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text1"></textarea>
+    </div>
   </div>
 
   <div class="photo-box">
     <div class="photo-frame"><img id="img2"></div>
-    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text2"></textarea>
+    </div>
   </div>
 </div>
 
@@ -138,12 +150,18 @@ textarea {
 
   <div class="photo-box">
     <div class="photo-frame"><img id="img3"></div>
-    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text3"></textarea>
+    </div>
   </div>
 
   <div class="photo-box">
     <div class="photo-frame"><img id="img4"></div>
-    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
+    <div class="content-row">
+      <div class="label">내용</div>
+      <textarea id="text4"></textarea>
+    </div>
   </div>
 </div>
 
@@ -165,7 +183,14 @@ function loadImages(e) {
   e.target.value = '';
 }
 
-/* 페이지 추가 버튼 */
+/* 내용 동일 적용 (1 → 2페이지까지) */
+function copyText() {
+  document.getElementById('text2').value = document.getElementById('text1').value;
+  document.getElementById('text3').value = document.getElementById('text1').value;
+  document.getElementById('text4').value = document.getElementById('text1').value;
+}
+
+/* 페이지 추가 */
 function addPage() {
   document.getElementById('page2').style.display = 'block';
 }
