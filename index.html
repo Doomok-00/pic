@@ -4,7 +4,7 @@
 <br># 세 번째 : 내용 작성(첫 번째 페이지 상단에 내용 작성) 후 내용 복사 버튼 누를 경우 내용이 전부 복사됨</br>
 <br>#    (ex : "101동 15층 벽체 철근배근 검측" 입력후 내용 복사 버튼 누르면 다른페이지 전부 다 복사됨)</br>
 <br># 네 번째 : pdf 저장버튼 클릭 후 공유하기</br>
-
+<br># 작성자 : 거꾸로해도 장과장 #</br>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -37,15 +37,20 @@ body {
 .controls button,
 .photo-btn {
   font-size: 18px;
-  padding: 14px 28px;
-  margin: 0 6px;
+  padding: 14px 24px;
+  margin: 0 4px;
   cursor: pointer;
   border: 1px solid #000;
   background: #eee;
 }
 
-.photo-btn input {
-  display: none;
+.photo-btn input { display: none; }
+
+/* 페이지 수 표시 */
+.page-count {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 /* A4 페이지 */
@@ -125,84 +130,94 @@ textarea {
     사진 추가
     <input type="file" accept="image/*" multiple onchange="loadImages(event)">
   </label>
+
   <button onclick="copyText()">내용 복사</button>
   <button onclick="addPage()">페이지 추가</button>
+  <button onclick="removePage()">페이지 삭제</button>
   <button onclick="savePDF()">PDF 저장</button>
+
+  <span class="page-count" id="pageCount">page : 1</span>
 </div>
 
-<!-- PAGE 1 -->
-<div class="page">
-  <div class="title">사 진 대 지</div>
-
-  <div class="photo-box">
-    <div class="photo-frame"><img id="img1"></div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text1"></textarea>
-    </div>
-  </div>
-
-  <div class="photo-box">
-    <div class="photo-frame"><img id="img2"></div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text2"></textarea>
-    </div>
-  </div>
-</div>
-
-<!-- PAGE 2 -->
-<div class="page" id="page2" style="display:none">
-  <div class="title">사 진 대 지</div>
-
-  <div class="photo-box">
-    <div class="photo-frame"><img id="img3"></div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text3"></textarea>
-    </div>
-  </div>
-
-  <div class="photo-box">
-    <div class="photo-frame"><img id="img4"></div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text4"></textarea>
-    </div>
-  </div>
-</div>
+<div id="pages"></div>
 
 <script>
+let pageIndex = 0;
+let imgIndex = 1;
+
+/* 페이지 생성 */
+function createPage() {
+  pageIndex++;
+
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.dataset.page = pageIndex;
+
+  page.innerHTML = `
+    <div class="title">사 진 대 지</div>
+
+    ${[1,2].map(() => `
+      <div class="photo-box">
+        <div class="photo-frame"><img id="img${imgIndex++}"></div>
+        <div class="content-row">
+          <div class="label">내용</div>
+          <textarea></textarea>
+        </div>
+      </div>
+    `).join('')}
+  `;
+
+  document.getElementById('pages').appendChild(page);
+  updatePageCount();
+}
+
+/* 초기 1페이지 */
+createPage();
+
+/* 페이지 추가 */
+function addPage() {
+  createPage();
+}
+
+/* 페이지 삭제 (마지막) */
+function removePage() {
+  const pages = document.querySelectorAll('.page');
+  if (pages.length <= 1) return;
+
+  pages[pages.length - 1].remove();
+  updatePageCount();
+}
+
+/* 페이지 수 표시 */
+function updatePageCount() {
+  const count = document.querySelectorAll('.page').length;
+  document.getElementById('pageCount').textContent = `page : ${count}`;
+}
+
 /* 사진 4장 자동 배치 */
 function loadImages(e) {
   const files = Array.from(e.target.files);
-  const ids = ['img1','img2','img3','img4'];
+  const imgs = document.querySelectorAll('.photo-frame img');
 
-  files.slice(0,4).forEach((file, i) => {
+  files.slice(0, imgs.length).forEach((file, i) => {
     const reader = new FileReader();
-    reader.onload = () => {
-      document.getElementById(ids[i]).src = reader.result;
-      if (i >= 2) document.getElementById('page2').style.display = 'block';
-    };
+    reader.onload = () => imgs[i].src = reader.result;
     reader.readAsDataURL(file);
   });
 
   e.target.value = '';
 }
 
-/* 내용 동일 적용 (1 → 2페이지까지) */
+/* 내용 동일 적용 */
 function copyText() {
-  document.getElementById('text2').value = document.getElementById('text1').value;
-  document.getElementById('text3').value = document.getElementById('text1').value;
-  document.getElementById('text4').value = document.getElementById('text1').value;
+  const texts = document.querySelectorAll('textarea');
+  if (!texts.length) return;
+
+  const value = texts[0].value;
+  texts.forEach(t => t.value = value);
 }
 
-/* 페이지 추가 */
-function addPage() {
-  document.getElementById('page2').style.display = 'block';
-}
-
-/* PDF 저장 (2페이지 자동) */
+/* PDF 저장 (모든 페이지) */
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
@@ -226,7 +241,6 @@ async function savePDF() {
 
 </body>
 </html>
-
 
 
 
