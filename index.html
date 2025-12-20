@@ -27,12 +27,14 @@ body {
   padding: 16px;
 }
 
-.controls button {
+.controls button, .photo-btn {
   font-size: 18px;
   padding: 14px 28px;
-  margin: 0 8px;
+  margin: 0 6px;
   cursor: pointer;
 }
+
+.photo-btn input { display: none; }
 
 /* A4 페이지 */
 .page {
@@ -60,21 +62,6 @@ body {
   margin-bottom: 26px;
 }
 
-/* 사진 추가 버튼 */
-.photo-btn {
-  display: inline-block;
-  padding: 8px 14px;
-  margin-bottom: 8px;
-  border: 1px solid #000;
-  background: #eee;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.photo-btn input {
-  display: none;
-}
-
 /* 사진 영역 */
 .photo-frame {
   width: 100%;
@@ -89,10 +76,10 @@ body {
 .photo-frame img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* 사진 안 잘리게 */
+  object-fit: contain;
 }
 
-/* 내용 영역 */
+/* 내용 */
 .content-row {
   display: flex;
   border-top: 2px solid #000;
@@ -105,13 +92,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
 }
 
 textarea {
   flex: 1;
   height: 60px;
-  line-height: 60px;
   border: none;
   resize: none;
   font-size: 18px;
@@ -125,99 +110,87 @@ textarea {
 
 <div class="controls" id="controls">
   <label class="photo-btn">
-    사진추가 - 2장선택
+    사진 여러 장 추가 (최대 4장)
     <input type="file" accept="image/*" multiple onchange="loadImages(event)">
   </label>
-  <button onclick="copyText()">내용 동일 적용</button>
+  <button onclick="addPage()">페이지 추가</button>
   <button onclick="savePDF()">PDF 저장</button>
-  <button onclick="resetPage()">초기화</button>
 </div>
 
-<div class="page" id="pdfArea">
+<!-- PAGE 1 -->
+<div class="page">
   <div class="title">사 진 대 지</div>
 
   <div class="photo-box">
-    <div class="photo-frame">
-      <img id="img1">
-    </div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text1"></textarea>
-    </div>
+    <div class="photo-frame"><img id="img1"></div>
+    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
   </div>
 
   <div class="photo-box">
-    <div class="photo-frame">
-      <img id="img2">
-    </div>
-    <div class="content-row">
-      <div class="label">내용</div>
-      <textarea id="text2"></textarea>
-    </div>
+    <div class="photo-frame"><img id="img2"></div>
+    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page2" style="display:none">
+  <div class="title">사 진 대 지</div>
+
+  <div class="photo-box">
+    <div class="photo-frame"><img id="img3"></div>
+    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
+  </div>
+
+  <div class="photo-box">
+    <div class="photo-frame"><img id="img4"></div>
+    <div class="content-row"><div class="label">내용</div><textarea></textarea></div>
   </div>
 </div>
 
 <script>
-/* 여러 장 선택 → 순서대로 자동 배치 */
+/* 사진 4장 자동 배치 */
 function loadImages(e) {
   const files = Array.from(e.target.files);
-  const imgIds = ['img1', 'img2'];
+  const ids = ['img1','img2','img3','img4'];
 
-  files.slice(0, imgIds.length).forEach((file, index) => {
+  files.slice(0,4).forEach((file, i) => {
     const reader = new FileReader();
     reader.onload = () => {
-      document.getElementById(imgIds[index]).src = reader.result;
+      document.getElementById(ids[i]).src = reader.result;
+      if (i >= 2) document.getElementById('page2').style.display = 'block';
     };
     reader.readAsDataURL(file);
   });
 
-  // iOS 재선택 가능 처리
   e.target.value = '';
 }
 
-function copyText() {
-  document.getElementById('text2').value =
-    document.getElementById('text1').value;
+/* 페이지 추가 버튼 */
+function addPage() {
+  document.getElementById('page2').style.display = 'block';
 }
 
-function resetPage() {
-  ['img1','img2'].forEach(id => {
-    document.getElementById(id).src = '';
-  });
-
-  document.querySelectorAll('textarea').forEach(txt => {
-    txt.value = '';
-  });
-}
-
+/* PDF 저장 (2페이지 자동) */
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
 
-  await document.fonts.ready;
-  await new Promise(r => setTimeout(r, 300));
-
-  const canvas = await html2canvas(
-    document.getElementById('pdfArea'),
-    { scale: 1, backgroundColor: '#ffffff' }
-  );
-
-  const imgData = canvas.toDataURL('image/jpeg', 0.85);
-
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({
-    orientation: 'p',
-    unit: 'px',
-    format: [794, 1123]
-  });
+  const pdf = new jsPDF({ unit:'px', format:[794,1123] });
 
-  pdf.addImage(imgData, 'JPEG', 0, 0, 794, 1123);
+  const pages = document.querySelectorAll('.page');
+
+  for (let i = 0; i < pages.length; i++) {
+    if (i > 0) pdf.addPage();
+    const canvas = await html2canvas(pages[i], { scale:1, backgroundColor:'#fff' });
+    const img = canvas.toDataURL('image/jpeg', 0.85);
+    pdf.addImage(img, 'JPEG', 0, 0, 794, 1123);
+  }
+
   pdf.save('사진대지.pdf');
-
   controls.style.display = 'block';
 }
 </script>
 
 </body>
 </html>
-
