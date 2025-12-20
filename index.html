@@ -89,7 +89,7 @@ body {
 .photo-frame img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* 사진 안 잘리게 */
 }
 
 /* 내용 영역 */
@@ -124,6 +124,10 @@ textarea {
 <body>
 
 <div class="controls" id="controls">
+  <label class="photo-btn">
+    사진 여러 장 추가
+    <input type="file" accept="image/*" multiple onchange="loadImages(event)">
+  </label>
   <button onclick="copyText()">내용 동일 적용</button>
   <button onclick="savePDF()">PDF 저장</button>
   <button onclick="resetPage()">초기화</button>
@@ -132,12 +136,8 @@ textarea {
 <div class="page" id="pdfArea">
   <div class="title">사 진 대 지</div>
 
-  <div class="photo-box" id="photoBox1">
-    <label class="photo-btn">
-      사진 추가
-      <input type="file" accept="image/*" onchange="loadImage(event,'img1')">
-    </label>
-    <div class="photo-frame" id="frame1">
+  <div class="photo-box">
+    <div class="photo-frame">
       <img id="img1">
     </div>
     <div class="content-row">
@@ -146,12 +146,8 @@ textarea {
     </div>
   </div>
 
-  <div class="photo-box" id="photoBox2">
-    <label class="photo-btn">
-      사진 추가
-      <input type="file" accept="image/*" onchange="loadImage(event,'img2')">
-    </label>
-    <div class="photo-frame" id="frame2">
+  <div class="photo-box">
+    <div class="photo-frame">
       <img id="img2">
     </div>
     <div class="content-row">
@@ -162,15 +158,21 @@ textarea {
 </div>
 
 <script>
-function loadImage(e, id) {
-  const file = e.target.files[0];
-  if (!file) return;
+/* 여러 장 선택 → 순서대로 자동 배치 */
+function loadImages(e) {
+  const files = Array.from(e.target.files);
+  const imgIds = ['img1', 'img2'];
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    document.getElementById(id).src = reader.result;
-  };
-  reader.readAsDataURL(file);
+  files.slice(0, imgIds.length).forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      document.getElementById(imgIds[index]).src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // iOS 재선택 가능 처리
+  e.target.value = '';
 }
 
 function copyText() {
@@ -179,17 +181,10 @@ function copyText() {
 }
 
 function resetPage() {
-  // 이미지 초기화 (iOS 호환)
   ['img1','img2'].forEach(id => {
-    const img = document.getElementById(id);
-    const parent = img.parentNode;
-    parent.removeChild(img);             // 기존 이미지 제거
-    const newImg = document.createElement('img'); // 새 이미지 생성
-    newImg.id = id;
-    parent.appendChild(newImg);         // 새 이미지 추가
+    document.getElementById(id).src = '';
   });
 
-  // 텍스트 초기화
   document.querySelectorAll('textarea').forEach(txt => {
     txt.value = '';
   });
@@ -198,10 +193,6 @@ function resetPage() {
 async function savePDF() {
   const controls = document.getElementById('controls');
   controls.style.display = 'none';
-
-  document.querySelectorAll('.photo-btn').forEach(el => {
-    el.style.display = 'none';
-  });
 
   await document.fonts.ready;
   await new Promise(r => setTimeout(r, 300));
@@ -220,16 +211,10 @@ async function savePDF() {
     format: [794, 1123]
   });
 
-  const imgWidth = 794;
-  const imgHeight = canvas.height * (imgWidth / canvas.width);
-
-  pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+  pdf.addImage(imgData, 'JPEG', 0, 0, 794, 1123);
   pdf.save('사진대지.pdf');
 
   controls.style.display = 'block';
-  document.querySelectorAll('.photo-btn').forEach(el => {
-    el.style.display = '';
-  });
 }
 </script>
 
