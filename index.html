@@ -114,8 +114,16 @@ body {
   align-items: center;
 }
 
-textarea {
+/* 새로 추가된 wrapper */
+.textarea-wrapper {
   flex: 1;
+  display: flex;
+  align-items: center;   /* 세로 가운데 정렬 */
+  justify-content: center; /* 가로 가운데 정렬 (선택) */
+}
+
+textarea {
+  width: 100%;
   height: 60px;
   border: none;
   resize: none;
@@ -176,7 +184,9 @@ function createPage() {
         <div class="photo-frame"><img id="img${imgIndex++}"></div>
         <div class="content-row">
           <div class="label">내용</div>
-          <textarea></textarea>
+          <div class="textarea-wrapper">
+            <textarea></textarea>
+          </div>
         </div>
       </div>
     `).join('')}
@@ -262,8 +272,3 @@ async function savePDF() {
 
 </body>
 </html>
-
-
-
-
-
